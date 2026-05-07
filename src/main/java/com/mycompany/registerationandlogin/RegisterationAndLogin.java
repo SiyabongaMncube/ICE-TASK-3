@@ -29,12 +29,12 @@ public class RegisterationAndLogin {
         String registrationMessage = user.registerUser(userName, password, cellPhoneNumber);
 System.out.println(registrationMessage);
         if (!"User has been registered successfully.".equals(registrationMessage)) {
-            inp.close();
+            
             return;
         }
 
         System.out.println();
-        System.out.println("=== Login ===");//Login feature
+        System.out.println("Login Details");//Login feature
 
         System.out.print("Enter username: ");
         String enteredUserName = inp.nextLine();
@@ -45,7 +45,7 @@ System.out.println(registrationMessage);
         boolean loginSuccessful = user.loginUser(enteredUserName, enteredPassword);
         System.out.println(user.returnLoginStatus(loginSuccessful));
 
-        inp.close();
+  
 
         
        }
