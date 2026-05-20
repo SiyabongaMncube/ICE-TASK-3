@@ -2,14 +2,11 @@
 
 package com.mycompany.registerationandlogin;
 import java.util.Scanner;
-
 import java.util.ArrayList;
 import java.util.List;
 public class RegisterationAndLogin {
 
     public static void main(String[] args) {
-       Scanner inp = new Scanner(System.in);
-       RegisterAndLoginClass user = new RegisterAndLoginClass();
        
 Scanner sc = new Scanner(System.in);
         RegisterAndLoginClass user = new RegisterAndLoginClass();
@@ -24,28 +21,16 @@ Scanner sc = new Scanner(System.in);
         String firstName = sc.nextLine();
 
         System.out.print("Enter last name: ");
-        String lastName = inp.nextLine();
         String lastName = sc.nextLine();
 
-        System.out.print("Enter username: ");
-        String userName = inp.nextLine();
         System.out.print("Enter username (must contain '_', max 5 chars): ");
         String userName = sc.nextLine();
         System.out.println(user.getUserNameMessage(userName));
 
-        System.out.print("Enter password: ");
-        String password = inp.nextLine();
         System.out.print("Enter password (>=8 chars, 1 uppercase, 1 digit, 1 special): ");
         String password = sc.nextLine();
         System.out.println(user.getPasswordMessage(password));
 
-        System.out.print("Enter South African cell number (example: +27838968976): ");
-        String cellPhoneNumber = inp.nextLine();
-        
-        String registrationMessage = user.registerUser(userName, password, cellPhoneNumber);
-System.out.println(registrationMessage);
-        if (!"User has been registered successfully.".equals(registrationMessage)) {
-            
         System.out.print("Enter South African cell number (e.g. +27838968976): ");
         String cellPhoneNumber = sc.nextLine();
 
@@ -59,17 +44,14 @@ System.out.println(registrationMessage);
         }
 
         System.out.println();
-        System.out.println("Login Details");//Login feature
 
         //STEP 2: LOGIN 
         System.out.println("Login Details");
 
         System.out.print("Enter username: ");
-        String enteredUserName = inp.nextLine();
         String enteredUserName = sc.nextLine();
 
         System.out.print("Enter password: ");
-        String enteredPassword = inp.nextLine();
         String enteredPassword = sc.nextLine();
 
         boolean loginSuccessful = user.loginUser(enteredUserName, enteredPassword);
@@ -81,9 +63,6 @@ System.out.println(registrationMessage);
             return;
         }
 
-        
-       }
-        
         System.out.println();
 
         //STEP 3: HOW MANY MESSAGES 
