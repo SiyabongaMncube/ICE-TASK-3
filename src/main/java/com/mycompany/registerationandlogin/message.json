@@ -1,0 +1,41 @@
+{
+  "messages": [
+    {
+      "messageID": "5078623910",
+      "messageHash": "50:1:HIMIKE",
+      "recipient": "+27718693002",
+      "messageText": "Hi Mike, can you join us for dinner tonight?",
+      "sent": true
+    },
+    {
+      "messageID": "3142987650",
+      "messageHash": "31:2:DIDYOU",
+      "recipient": "+27834521109",
+      "messageText": "Did you get the documents I sent you?",
+      "sent": true
+        
+        },
+    {
+      "messageID": "7865302941",
+      "messageHash": "78:0:PLEASECONFIRM",
+      "recipient": "+27791234567",
+      "messageText": "Please confirm your attendance for the meeting tomorrow at 9am. We need to finalise the agenda.",
+      "sent": false
+    },
+    {
+      "messageID": "2390154876",
+      "messageHash": "23:3:AREYOU",
+      "recipient": "+27829876543",
+      "messageText": "Are you coming to the braai on Saturday?",
+      "sent": true
+    },
+    {
+      "messageID": "9012345678",
+      "messageHash": "90:0:JUSTCALLING",
+      "recipient": "+27711230987",
+      "messageText": "Just calling to check in, hope all is well.",
+      "sent": false
+    }
+  ],
+  "totalMessagesSent": 3
+}
