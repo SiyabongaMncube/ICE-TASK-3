@@ -23,8 +23,7 @@ public class RegisterAndLoginClass {
         if (checkUserName(userName)) {
             return "Username successfully captured.";
         } else {
-            return "Username is not correctly formatted. Please ensure that your username "
-                    + "contains an underscore and is no more than five characters in length.";
+            return "Username is not correctly formatted. Please ensure that your username "+ "contains an underscore and is no more than five characters in length.";
         }
     }
 
@@ -34,7 +33,7 @@ public class RegisterAndLoginClass {
       and a special character.
      */
     public boolean checkPasswordComplexity(String password) {
-        if (password.length() < 8) return false;
+        if (password.length() <= 8) return false;
 
         boolean hasUpper   = false;
         boolean hasDigit   = false;
@@ -52,9 +51,7 @@ public class RegisterAndLoginClass {
         if (checkPasswordComplexity(password)) {
             return "Password successfully captured.";
         } else {
-            return "Password is not correctly formatted. Please ensure that the password "
-                    + "contains at least eight characters, a capital letter, a number, "
-                    + "and a special character.";
+            return "Password is not correctly formatted. Please ensure that the password "+ "contains at least eight characters, a capital letter, a number, " + "and a special character.";
         }
     }
 
@@ -69,17 +66,13 @@ public class RegisterAndLoginClass {
     //Registration 
     public String registerUser(String userName, String password, String cellPhoneNumber) {
         if (!checkUserName(userName)) {
-            return "Username is not correctly formatted; please ensure the username "
-                    + "contains an underscore and is no more than five characters in length.";
+            return "Username is not correctly formatted; please ensure the username " + "contains an underscore and is no more than five characters in length.";
         }
         if (!checkPasswordComplexity(password)) {
-            return "Password is not correctly formatted; please ensure the password "
-                    + "contains at least eight characters, a capital letter, a number, "
-                    + "and a special character.";
+            return "Password is not correctly formatted; please ensure the password "+ "contains at least eight characters, a capital letter, a number, "+ "and a special character.";
         }
         if (!checkCellPhoneNumber(cellPhoneNumber)) {
-            return "Cell phone number is incorrectly formatted or does not contain an "
-                    + "international code.";
+            return "Cell phone number is incorrectly formatted or does not contain an "+ "international code.";
         }
 
         //All checks passed persist credentials

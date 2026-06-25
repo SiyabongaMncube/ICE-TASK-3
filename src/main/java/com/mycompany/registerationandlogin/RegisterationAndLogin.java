@@ -149,11 +149,86 @@ Scanner sc = new Scanner(System.in);
 
        
         System.out.println("\nGoodbye, "  + "! Have a great day.");
+        
+        
     }
 
-    
-   
+    // Stored Messages Sub-Menu
+ 
+    /*
+      Sub-menu for all stored-message operations (Part 3, requirement 2a–f).
+      All operations use the parallel arrays declared in Message.java.
+     
+     sc shared Scanner
+      senderName full name of the logged-in user (used as sender display)
+     */
+    private static void storedMessagesMenu(Scanner sc, String senderName) {
+        boolean back = false;
+ 
+        while (!back) {
+            System.out.println("\nStored Messages Menu");
+            System.out.println("a) Display sender and recipient of all stored messages");
+            System.out.println("b) Display the longest stored message");
+            System.out.println("c) Search for a message by ID");
+            System.out.println("d) Search messages by recipient");
+            System.out.println("e) Delete a message using its hash");
+            System.out.println("f) Display full stored messages report");
+            System.out.println("x) Back to main menu");
+            System.out.print("Enter option: ");
+ 
+            String choice = sc.nextLine().trim().toLowerCase();
+ 
+            switch (choice) {
+ 
+                case "a":
+                    // (a) Display senders and recipients – traverses parallel arrays
+                    System.out.println(
+                        Message.displayAllStoredSendersAndRecipients(senderName));
+                    break;
+ 
+                case "b":
+                    // (b) Longest message – searches array by comparing lengths
+                    System.out.println(Message.displayLongestStoredMessage());
+                    break;
+ 
+                case "c":
+                    // (c) Search by message ID – array search (Chapter 8, slides 19–20)
+                    System.out.print("Enter Message ID to search: ");
+                    String searchID = sc.nextLine().trim();
+                    System.out.println(Message.searchByMessageID(searchID));
+                    break;
+ 
+                case "d":
+                    // (d) Search by recipient – parallel array search (Chapter 8, slides 21–23)
+                    System.out.print("Enter recipient cell number to search: ");
+                    String searchRecip = sc.nextLine().trim();
+                    System.out.println(Message.searchByRecipient(searchRecip));
+                    break;
+ 
+                case "e":
+                    // (e) Delete by hash – searches array, shifts elements left
+                    System.out.print("Enter Message Hash to delete: ");
+                    String hash = sc.nextLine().trim();
+                    System.out.println(Message.deleteByMessageHash(hash));
+                    break;
+ 
+                case "f":
+                    // (f) Full report – traverses all four parallel arrays
+                    System.out.println(Message.displayStoredMessagesReport());
+                    break;
+ 
+                case "x":
+                    back = true;
+                    break;
+ 
+                default:
+                    System.out.println("Invalid option. Please enter a, b, c, d, e, f, or x.");
+            }
+        }
     }
+}
+   
+    
 
        
         

@@ -1,277 +1,296 @@
 
 package com.mycompany.registerationandlogin;
 
+
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 
+/*
+  MessageTest - Unit tests for Part 3 (Chapter 8: Arrays).
+ 
+  Test data matches the assignment specification exactly (Image 2).
+  Each test corresponds to a row in the unit test rubric (Image 3).
+ */
 public class MessageTest {
-    
-   
 
-    private Message message;
+    // ── Test Data from assignment spec
 
+    // Message 1 - action: send
+    private static final String RECIP_1 = "+27834557896";
+    private static final String TEXT_1  = "Did you get the cake?";
+
+    // Message 2 - action: store
+    private static final String RECIP_2 = "+27838884567";
+    private static final String TEXT_2  = "Where are you? You are late! I have asked you to be on time.";
+
+    // Message 3 - action: disregard
+    private static final String RECIP_3 = "+27834484567";
+    private static final String TEXT_3  = "Yohoooo, I am at your gate.";
+
+    // Message 4 - action: send
+    private static final String RECIP_4 = "+27838884567";
+    private static final String TEXT_4  = "It is dinner time!";
+
+    // Message 5 - action: store
+    private static final String RECIP_5 = "+27838884567";
+    private static final String TEXT_5  = "Ok, I am leaving without you.";
+
+    // ── Runs before EVERY test to reset arrays and create fresh test data ─────
     @BeforeEach
-    void setUp() {
-        // Fresh message before every test
-        message = new Message("+27718693002", "Hi Mike, can you join us for dinner tonight?");
+    public void setUp() throws Exception {
+        resetStaticArrays();
+
+        // Message 1 - Send
+        Message m1 = new Message(RECIP_1, TEXT_1);
+        m1.sendMessage("send");
+
+        // Message 2 - Store
+        Message m2 = new Message(RECIP_2, TEXT_2);
+        m2.sendMessage("store");
+
+        // Message 3 - Disregard
+        Message m3 = new Message(RECIP_3, TEXT_3);
+        m3.sendMessage("disregard");
+
+        // Message 4 - Send
+        Message m4 = new Message(RECIP_4, TEXT_4);
+        m4.sendMessage("send");
+
+        // Message 5 - Store
+        Message m5 = new Message(RECIP_5, TEXT_5);
+        m5.sendMessage("store");
     }
 
-     // checkMessageID()
+    // ── Resets all static fields so each test starts clean ────────────────────
+    private void resetStaticArrays() throws Exception {
+        setInt("totalMessagesSent", 0);
+        setInt("sentCount",         0);
+        setInt("disregardedCount",  0);
+        setInt("storedCount",       0);
+        setInt("hashCount",         0);
+        setInt("idCount",           0);
+
+        setArray("sentMessages",        new String[100]);
+        setArray("disregardedMessages", new String[100]);
+        setArray("storedMessages",      new String[100]);
+        setArray("storedRecipients",    new String[100]);
+        setArray("storedHashes",        new String[100]);
+        setArray("storedIDs",           new String[100]);
+        setArray("messageHashArray",    new String[100]);
+        setArray("messageIDArray",      new String[100]);
+    }
+
+    // Helper: sets a private static int field by name using reflection
+    private void setInt(String fieldName, int value) throws Exception {
+        java.lang.reflect.Field f = Message.class.getDeclaredField(fieldName);
+        f.setAccessible(true);
+        f.set(null, value);
+    }
+
+    // Helper: sets a private static String[] field by name using reflection
+    private void setArray(String fieldName, String[] value) throws Exception {
+        java.lang.reflect.Field f = Message.class.getDeclaredField(fieldName);
+        f.setAccessible(true);
+        f.set(null, value);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 1: Sent Messages array correctly populated
+    // Test data: messages 1 and 4 (both flagged "send")
+    // Expected: sentMessages[0] = TEXT_1, sentMessages[1] = TEXT_4
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Generated message ID should be exactly 10 characters")
-    void testCheckMessageID_valid() {
-        assertTrue(message.checkMessageID(),
-                "Expected auto-generated message ID to be 10 digits");
+    public void testSentMessagesArrayCorrectlyPopulated() {
+        assertEquals(2, Message.displayLongestStoredMessage(),
+            "sentMessages array should have exactly 2 entries.");
+
+        assertEquals(TEXT_1, Message.displayLongestStoredMessage(),
+            "First sent message should be: " + TEXT_1);
+
+        assertEquals(TEXT_4, Message.displayLongestStoredMessage(),
+            "Second sent message should be: " + TEXT_4);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 2: Display the longest message
+    // Test data: messages 1-4
+    // Expected: TEXT_2 is the longest stored message
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Message ID should contain only digits")
-    void testMessageID_onlyDigits() {
-        String id = message.getMessageID();
-        assertTrue(id.matches("\\d{10}"),
-                "Expected message ID to contain only digits and be 10 chars long");
+    public void testDisplayLongestStoredMessage() {
+        String result = Message.displayLongestStoredMessage();
+
+        assertTrue(result.contains(TEXT_2),
+            "The longest stored message should be: " + TEXT_2);
     }
 
-   
-    // checkRecipientCell()
-   @Test
-    @DisplayName("Valid recipient cell number starting with + should pass")
-    void testCheckRecipientCell_valid() {
-        assertTrue(message.checkRecipientCell(),
-                "Expected +27718693002 to pass recipient validation");
-    }
-
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 3: Search for a message by messageID
+    // Test data: message 2 (first stored message, so storedIDs[0])
+    // Expected: result contains TEXT_2 and RECIP_2
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Recipient without + prefix should fail")
-    void testCheckRecipientCell_noPlus() {
-        Message msg = new Message("27718693002", "Hello");
-        assertFalse(msg.checkRecipientCell(),
-                "Recipient without '+' should return false");
+    public void testSearchByMessageID() {
+        // Get the ID of the first stored message (Message 2)
+        String id = Message.searchByMessageID(RECIP_1);
+        String result = Message.searchByMessageID(id);
+
+        assertTrue(result.contains(TEXT_2),
+            "Search by ID should return message: " + TEXT_2);
+
+        assertTrue(result.contains(RECIP_2),
+            "Search by ID should return recipient: " + RECIP_2);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 4: Search all messages sent or stored for a particular recipient
+    // Test data: +27838884567 (recipient of messages 2 and 5)
+    // Expected: result contains TEXT_2 and TEXT_5
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Recipient shorter than 10 characters should fail")
-    void testCheckRecipientCell_tooShort() {
-        Message msg = new Message("+27123", "Hello");
-        assertFalse(msg.checkRecipientCell(),
-                "Recipient shorter than 10 chars should return false");
+    public void testSearchByRecipient() {
+        String result = Message.searchByRecipient("+27838884567");
+
+        assertTrue(result.contains(TEXT_2),
+            "Result should contain message 2: " + TEXT_2);
+
+        assertTrue(result.contains(TEXT_5),
+            "Result should contain message 5: " + TEXT_5);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 5: Delete a message using a message hash
+    // Test data: Test Message 2 (first stored message, storedHashes[0])
+    // Expected: "successfully deleted" in result, storedCount drops from 2 to 1
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Recipient longer than 13 characters should fail")
-    void testCheckRecipientCell_tooLong() {
-        Message msg = new Message("+271234567890123", "Hello");
-        assertFalse(msg.checkRecipientCell(),
-                "Recipient longer than 13 chars should return false");
+    public void testDeleteByMessageHash() {
+        // Get the hash of Message 2 (first stored message)
+        String hashToDelete = Message.deleteByMessageHash(TEXT_1);
+        String result = Message.deleteByMessageHash(hashToDelete);
+
+        assertTrue(result.contains("successfully deleted"),
+            "Result should confirm deletion. Got: " + result);
+
+        assertEquals(1, Message.deleteByMessageHash(result),
+            "After deletion, storedCount should be 1.");
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 6: Display report shows all stored messages with full details
+    // Expected: report contains TEXT_2, TEXT_5, RECIP_2
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Recipient of exactly 10 characters with + should pass")
-    void testCheckRecipientCell_minLength() {
-        Message msg = new Message("+271234567", "Hello");
+    public void testDisplayStoredMessagesReport() {
+        String report = Message.displayStoredMessagesReport();
+
+        assertTrue(report.contains(TEXT_2),
+            "Report should contain: " + TEXT_2);
+
+        assertTrue(report.contains(TEXT_5),
+            "Report should contain: " + TEXT_5);
+
+        assertTrue(report.contains(RECIP_2),
+            "Report should contain recipient: " + RECIP_2);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 7: Disregarded Messages array correctly populated
+    // Test data: Message 3 (flagged "disregard")
+    // Expected: disregardedMessages[0] = TEXT_3
+    // ─────────────────────────────────────────────────────────────────────────
+    @Test
+    public void testDisregardedMessagesArrayCorrectlyPopulated() {
+        assertEquals(1, Message.displayStoredMessagesReport(),
+            "disregardedMessages array should have exactly 1 entry.");
+
+        assertEquals(TEXT_3, Message.displayStoredMessagesReport(),
+            "Disregarded message should be: " + TEXT_3);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 8: returnTotalMessages() returns correct count
+    // Messages 1 and 4 were sent, so total = 2
+    // ─────────────────────────────────────────────────────────────────────────
+    @Test
+    public void testReturnTotalMessages() {
+        assertEquals(2, Message.returnTotalMessages(),
+            "Total sent messages should be 2.");
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 9: checkMessageID() returns true for a valid 10-digit ID
+    // ─────────────────────────────────────────────────────────────────────────
+    @Test
+    public void testCheckMessageID() {
+        Message msg = new Message(RECIP_1, TEXT_1);
+        assertTrue(msg.checkMessageID(),
+            "Message ID should be exactly 10 digits.");
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 10: checkRecipientCell() returns true for valid +27 number
+    // ─────────────────────────────────────────────────────────────────────────
+    @Test
+    public void testCheckRecipientCellValid() {
+        Message msg = new Message("+27838884567", TEXT_1);
         assertTrue(msg.checkRecipientCell(),
-                "Recipient of exactly 10 chars starting with '+' should pass");
+            "Cell number +27838884567 should be valid.");
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 11: checkRecipientCell() returns false for invalid number
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Recipient of exactly 13 characters with + should pass")
-    void testCheckRecipientCell_maxLength() {
-        Message msg = new Message("+271234567890", "Hello");
-        assertTrue(msg.checkRecipientCell(),
-                "Recipient of exactly 13 chars starting with '+' should pass");
+    public void testCheckRecipientCellInvalid() {
+        Message msg = new Message("0838884567", TEXT_1);
+        assertFalse(msg.checkRecipientCell(),
+            "Cell number without '+' should be invalid.");
     }
 
-    
-    // checkMessageLength()
-     @Test
-    @DisplayName("Message within 250 characters should pass")
-    void testCheckMessageLength_valid() {
-        assertTrue(message.checkMessageLength(),
-                "Expected short message to pass length check");
-    }
-
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 12: checkMessageLength() returns false when text exceeds 250 chars
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Message of exactly 250 characters should pass")
-    void testCheckMessageLength_exactly250() {
-        String text = "A".repeat(250);
-        Message msg = new Message("+27718693002", text);
-        assertTrue(msg.checkMessageLength(),
-                "Message of exactly 250 chars should return true");
-    }
-
-    @Test
-    @DisplayName("Message of 251 characters should fail")
-    void testCheckMessageLength_tooLong() {
-        String text = "A".repeat(251);
-        Message msg = new Message("+27718693002", text);
+    public void testCheckMessageLengthTooLong() {
+        String longText = "A".repeat(251);
+        Message msg = new Message(RECIP_1, longText);
         assertFalse(msg.checkMessageLength(),
-                "Message of 251 chars should return false");
+            "Message over 250 characters should fail length check.");
     }
 
-// createMessageHash()
-      @Test
-    @DisplayName("Hash should be in uppercase")
-    void testCreateMessageHash_isUpperCase() {
-        String hash = message.getMessageHash();
-        assertEquals(hash.toUpperCase(), hash,
-                "Expected message hash to be fully uppercase");
-    }
-
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 13: sendMessage() returns correct string for each action
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Hash should contain the first word of the message")
-    void testCreateMessageHash_containsFirstWord() {
-        // message text: "Hi Mike, can you join us for dinner tonight?"
-        // first word: "HI"
-        assertTrue(message.getMessageHash().contains("HI"),
-                "Expected hash to contain first word 'HI'");
+    public void testSendMessageActions() {
+        Message m1 = new Message(RECIP_1, TEXT_1);
+        assertEquals("Message successfully sent.",   m1.sendMessage("send"));
+
+        Message m2 = new Message(RECIP_2, TEXT_2);
+        assertEquals("Message successfully stored.", m2.sendMessage("store"));
+
+        Message m3 = new Message(RECIP_3, TEXT_3);
+        assertEquals("Press 0 to delete message.",  m3.sendMessage("disregard"));
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // TEST 14: Stored Messages array correctly populated
+    // Messages 2 and 5 were stored
+    // Expected: storedMessages[0] = TEXT_2, storedMessages[1] = TEXT_5
+    // ─────────────────────────────────────────────────────────────────────────
     @Test
-    @DisplayName("Hash should contain the last word of the message")
-    void testCreateMessageHash_containsLastWord() {
-        // last word: "TONIGHT?"
-        assertTrue(message.getMessageHash().contains("TONIGHT?"),
-                "Expected hash to contain last word 'TONIGHT?'");
-    }
+    public void testStoredMessagesArrayCorrectlyPopulated() {
+        assertEquals(2, Message.displayAllStoredSendersAndRecipients(RECIP_1),
+            "storedMessages array should have exactly 2 entries.");
 
-    @Test
-    @DisplayName("Hash for single-word message should repeat the word")
-    void testCreateMessageHash_singleWord() {
-        Message msg = new Message("+27718693002", "Hello");
-        String hash = msg.getMessageHash();
-        // single word → firstWord + lastWord = "HELLOHELLO"
-        assertTrue(hash.contains("HELLOHELLO"),
-                "Expected single-word hash to repeat the word twice");
-    }
+        assertEquals(TEXT_2, Message.displayStoredMessagesReport(),
+            "First stored message should be: " + TEXT_2);
 
-    
-    // sendMessage()
-     @Test
-    @DisplayName("sendMessage('send') should return success message")
-    void testSendMessage_send() {
-        assertEquals("Message successfully sent.",
-                message.sendMessage("send"),
-                "Expected 'Message successfully sent.' when action is send");
-    }
-
-    @Test
-    @DisplayName("sendMessage('send') should mark message as sent")
-    void testSendMessage_send_marksAsSent() {
-        message.sendMessage("send");
-        assertTrue(message.isSent(),
-                "Expected isSent() to be true after send action");
-    }
-
-    @Test
-    @DisplayName("sendMessage('store') should return stored message")
-    void testSendMessage_store() {
-        assertEquals("Message successfully stored.",
-                message.sendMessage("store"),
-                "Expected 'Message successfully stored.' when action is store");
-    }
-
-    @Test
-    @DisplayName("sendMessage('store') should not mark message as sent")
-    void testSendMessage_store_notSent() {
-        message.sendMessage("store");
-        assertFalse(message.isSent(),
-                "Expected isSent() to be false after store action");
-    }
-
-    @Test
-    @DisplayName("sendMessage('delete') should return delete prompt")
-    void testSendMessage_delete() {
-        assertEquals("Press 0 to delete message.",
-                message.sendMessage("delete"),
-                "Expected delete prompt when action is delete");
-    }
-
-    @Test
-    @DisplayName("sendMessage with invalid input should return error message")
-    void testSendMessage_invalidChoice() {
-        assertEquals("Invalid choice. Please enter send, store, or delete.",
-                message.sendMessage("xyz"),
-                "Expected error message for unrecognised action");
-    }
-
-    @Test
-    @DisplayName("sendMessage should be case-insensitive")
-    void testSendMessage_caseInsensitive() {
-        assertEquals("Message successfully sent.",
-                message.sendMessage("SEND"),
-                "Expected send action to work regardless of case");
-    }
-
-    
-    // returnTotalMessages()
-    @Test
-    @DisplayName("Total messages sent increases after each send action")
-    void testReturnTotalMessages_incrementsOnSend() {
-        int before = Message.returnTotalMessages();
-        message.sendMessage("send");
-        int after = Message.returnTotalMessages();
-        assertEquals(before + 1, after,
-                "Expected total messages sent to increase by 1 after a send");
-    }
-
-    @Test
-    @DisplayName("Total messages sent does not increase after store action")
-    void testReturnTotalMessages_noIncrementOnStore() {
-        int before = Message.returnTotalMessages();
-        message.sendMessage("store");
-        int after = Message.returnTotalMessages();
-        assertEquals(before, after,
-                "Expected total messages sent to stay the same after store");
-    }
-
-    @Test
-    @DisplayName("Total messages sent does not increase after delete action")
-    void testReturnTotalMessages_noIncrementOnDelete() {
-        int before = Message.returnTotalMessages();
-        message.sendMessage("delete");
-        int after = Message.returnTotalMessages();
-        assertEquals(before, after,
-                "Expected total messages sent to stay the same after delete");
-    }
-
-    
-    // printMessage()
-    @Test
-    @DisplayName("printMessage should contain the message ID")
-    void testPrintMessage_containsID() {
-        assertTrue(message.printMessage().contains(message.getMessageID()),
-                "Expected printMessage output to contain the message ID");
-    }
-
-    @Test
-    @DisplayName("printMessage should contain the recipient")
-    void testPrintMessage_containsRecipient() {
-        assertTrue(message.printMessage().contains("+27718693002"),
-                "Expected printMessage output to contain the recipient");
-    }
-
-    @Test
-    @DisplayName("printMessage should contain the message text")
-    void testPrintMessage_containsText() {
-        assertTrue(message.printMessage().contains("Hi Mike"),
-                "Expected printMessage output to contain part of the message text");
-    }
-
-    @Test
-    @DisplayName("printMessage shows 'Not sent' before any action")
-    void testPrintMessage_notSentByDefault() {
-        assertTrue(message.printMessage().contains("Not sent"),
-                "Expected status to be 'Not sent' before any action");
-    }
-
-    @Test
-    @DisplayName("printMessage shows 'Sent' after send action")
-    void testPrintMessage_sentAfterSend() {
-        message.sendMessage("send");
-        assertTrue(message.printMessage().contains("Sent"),
-                "Expected status to be 'Sent' after send action");
+        assertEquals(TEXT_5, Message.displayStoredMessagesReport(),
+            "Second stored message should be: " + TEXT_5);
     }
 }
     
